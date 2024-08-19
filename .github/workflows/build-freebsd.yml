@@ -1,0 +1,25 @@
+name: Build
+on:
+  workflow_dispatch:
+
+jobs:
+  freebsdAmd64Build:
+    name: Build Freebsd amd64 Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setting up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Building Freebsd amd64 Version
+        run: |
+          CGO_ENABLED=0 GOOS=freebsd GOARCH=amd64 go build -o WireProxy_amd64 -v ./cmd/wireproxy
+          mkdir release_freebsd_amd64
+          mv WireProxy_amd64 wireproxy
+          cp wireproxy release_freebsd_amd64/wireproxy
+      - name: Upload Freebsd amd64 Version
+        uses: actions/upload-artifact@v4
+        with:
+          name: WireProxy_freebsd_amd64
+          path: release_freebsd_amd64
